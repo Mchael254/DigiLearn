@@ -1,0 +1,65 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+.navbar {
+    height: 13vh;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+
+}
+
+.logo {
+    border: solid blue 1px;
+    height: 100%;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo img {
+    width: 300px;
+}
+
+.classes{
+    margin-top: 20px;
+    border: solid #d4d2c8 1px;
+    height: 70vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 70vw;
+    padding: 20px;
+    background-color: #f1f1ee;
+}
+.classCard{
+    background-color: white;
+    border: solid #d4d2c8 1px;
+    height: 30vh;
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+
+}
+.classCard button{
+    width: 80%;
+    height: 50px;
+    background-color:green;
+    color:white;
+    font-size: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

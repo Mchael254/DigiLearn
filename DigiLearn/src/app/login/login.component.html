@@ -1,43 +1,55 @@
+<div class="main">
+    <div class="image">
 
-    <div class="main">
-        <div class="image">
-    
-        </div>
-        <div class="form">
-            <div class="container">
-                <div class="logo">
-                    <img src="../../assets/ministry.png" alt="logo">
-    
-                </div>
-                <div class="signin">
-                    <p style="float: left;">Sign in</p>
-    
-                </div>
-                <div class="please">
-                    <p>Please sign in to access this platform</p>
-                </div>
-               
-                <div class="formContainer">
-                    <form id="loginForm" method="POST"  class="loginForm">
-                        <input type="text" name="userEmail" id="userEmail" placeholder="E-mail address">
-                        <input type="password" name="password" id="password" placeholder="Password">
-                    </form>
-    
-                </div>
-                <div class="buttons">
-                    <button class="login" onclick="login(event)">Signin <span style="font-size: x-small;">>></span></button> Or
-                    <button class="register" style="background-color: #e10716;">Register</button>
-    
-                </div>
-                <div class="back">
-                    <a href="">Back to Smart Academy</a>
-                </div>
+    </div>
+    <div class="form">
+        <div class="container">
+            <div class="logo">
+                <img src="../../assets/ministry.png" alt="logo">
 
             </div>
-           
-            
-        </div>
-    </div>
+            <div class="signin">
+                <p style="float: left;">Sign in</p>
 
-    <script src="{{url_for('static', filename='js/login.js')}}"></script>
-    
+            </div>
+            <div class="please">
+                <p>Please sign in to access this platform</p>
+            </div>
+
+            <div class="formContainer">
+                <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" class="loginForm">
+                    <input type="text" name="userEmail" ngModel #userEmail="ngModel" placeholder="E-mail address"
+                        required email />
+                    <div *ngIf="userEmail.invalid && userEmail.touched" class="error">
+                        Please enter a valid email address.
+                    </div>
+
+                    <input type="password" name="password" ngModel #password="ngModel" placeholder="Password"
+                        required />
+                    <div *ngIf="password.invalid && password.touched" class="error">
+                        Password is required.
+                    </div>
+
+                    <div class="buttons">
+                        <button class="login" type="submit" [disabled]="loginForm.invalid">
+                            Signin <span style="font-size: x-small;">>></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="buttons">
+                
+            </div>
+
+            <div class="back">
+                <a href="">Back to Smart Academy</a>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<script src="{{url_for('static', filename='js/login.js')}}"></script>

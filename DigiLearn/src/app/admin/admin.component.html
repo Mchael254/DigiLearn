@@ -1,47 +1,94 @@
+<div class="main">
+    <div class="navbar">
+        <div class="logo">
+            <img src="../../assets/ministry.png" alt="logo">
 
-
-    <div class="main">
-        <div class="navbar">
-            <div class="logo">
-                <img src="../../assets/ministry.png" alt="logo">
-    
-            </div>
-            <div class="nav">
-                <ul>
-                    <li><a href="" style="color: green;">Back</a></li>
-                </ul>
-    
-            </div>
         </div>
-        <div class="dashboard">
-            <div class="navPanel">
-                <button onclick="openUpload(event)">upload file</button>
-                <button onclick="openCitizens(event)">citizens</button>
-                <button onclick="openAttendance(event)">attendance</button>
-                <button onclick="openQualifiers(event)">Qualifiers</button>
+        <div class="nav">
+            <ul>
+                <li><a href="" style="color: green;">Back</a></li>
+                <mat-icon>arrow_back</mat-icon>
 
+            </ul>
+
+        </div>
+    </div>
+    <div class="dashboard">
+        <div class="navPanel">
+            <button (click)="setView('upload')">Upload File</button>
+            <button (click)="setView('citizens')">Citizens</button>
+            <button (click)="setView('attendance')">Attendance</button>
+            <button (click)="setView('qualifiers')">Qualifiers</button>
+        </div>
+        <div class="container">
+            <div class="header">
+                <h1>Admin</h1>
             </div>
-            <div class="container">
-                <div class="header">
-                    <h1>Admin</h1>
-                </div>
+
+            <div class="formContainer" *ngIf="currentView === 'upload'">
                 <p>Upload excel file for registered citizens</p>
-                <div class="formContainer">
-                    <!-- Container to display the success message -->
-                    <div id="messageContainer" style="color: green; margin-bottom: 10px;"></div>
-                
-                    <form id="fileForm" method="POST" enctype="multipart/form-data">
-                        <input type="file" name="file" id="file" class="inputfile" required>
-                        <label for="file">Choose a file</label><br>
-                        <button type="button" class="upload" onclick="uploadFile(event)">Upload</button>
-                    </form>
+
+                <div id="messageContainer" style="color: green; margin-bottom: 10px;">
+
                 </div>
-                <a href="">Back</a>
-               
+
+                <h2>Single File Upload</h2>
+
+                <input type="file" class="file-input" (change)="onChange($event)" #fileUpload />
+                
+                <div *ngIf="file">
+                  <section class="file-info">
+                    File details:
+                    <ul>
+                      <li>Name: {{file.name}}</li>
+                      <li>Type: {{file.type}}</li>
+                      <li>Size: {{file.size}} bytes</li>
+                    </ul>
+                  </section>
+                
+                  <button (click)="onUpload()">Upload the file</button>
+                
+                  <section [ngSwitch]="status">
+                    <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
+                    <p *ngSwitchCase="'success'">✅ Done!</p>
+                    <p *ngSwitchCase="'fail'">❌ Error!</p>
+                    <p *ngSwitchDefault><mat-icon>hour_glass</mat-icon> Waiting to upload...</p>
+                  </section>
+                </div>
+                  
+
+            </div>
+
+            <div class="citizens" *ngIf="currentView === 'citizens'">
+                <div class="attendance-container ">
+                    <h2>Attendance Records</h2>
+                    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+                    <table *ngIf="citizensData.length > 0" class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Email</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let record of citizensData">
+                                <td>{{ record.Day }}</td>
+                                <td>{{ record.Email }}</td>
+                                <td>{{ record["First name"] }}</td>
+                                <td>{{ record["Last name"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p *ngIf="citizensData.length === 0">No attendance records found.</p>
+                </div>
+
             </div>
 
         </div>
-     
-    
+
     </div>
 
+
+</div>
