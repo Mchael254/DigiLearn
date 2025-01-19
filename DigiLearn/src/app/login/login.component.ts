@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { AdminService } from '../services/admin.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -7,29 +9,45 @@ import { Component } from '@angular/core';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient, private authService:AdminService, private router:Router) { }
 
+  loginError:string = '';
+  Email:string = '';
 
-  onSubmit(form: any) {
-    if (form.valid) {
-      const { userEmail, password } = form.value;
-      console.log('Login Data:', { userEmail, password });
-      
-      this.http.post('http://localhost:5000/login', { userEmail, password })
-        .subscribe({
-          next: (response) => {
-            console.log('Response from backend:', response);
-            
-          },
-          error: (error) => {
-            console.error('Error during login:', error);
-        
-          }
-        });
-      
-    } else {
-      console.log('Form is invalid');
-    }
+  onSubmit() {
+      if (this.Email == '') {
+        this.loginError = 'All fields are required';
+        setTimeout(() => {
+          this.loginError = '';
+        }, 3000);
+        return;  
+      }
+  
+      const loginData = {
+        Email: this.Email
+      };
+  
+      console.log(loginData);
+  
+      this.authService.login(loginData).subscribe(
+        (response) => {
+          console.log(response);
+          this.authService.setUserDetails(response.details);
+          this.router.navigate(['/class']);
+        },
+        (error) => {
+          console.error(error);
+          this.loginError = error.message || 'An unknown error occurred';
+          setTimeout(() => {
+            this.loginError = '';
+          }, 3000);
+        }
+      );  
+  
+   
   }
+
+
+
 
 }

@@ -1,37 +1,57 @@
 <div class="main">
-    <div class="navbar">
-        <div class="logo">
-            <img src="../../assets/ministry.png" alt="logo">
+  <div class="navbar">
+    <div class="logo">
+      <img src="../../assets/ministry.png" alt="logo">
 
-        </div>
-        <div class="nav">
-            <ul>
-                <li><a href="" style="color: green;">Back</a></li>
-                <mat-icon>arrow_back</mat-icon>
-
-            </ul>
-
-        </div>
     </div>
+    <div class="nav">
+      <ul>
+        <span><mat-icon>people</mat-icon></span>
+        <li>
+          <p>Welcome {{userDetails.Email}}</p>
+        </li>
+        <li><a href="" style="color: green;">Back</a></li>
 
+      </ul>
+
+
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="sidePanel">
+      <H1>Progress</H1>
+      <p>Welcome {{userDetails.Email}}</p>
+      <p>Days: {{userDetails.days}}</p>
+      <p>Day1: {{userDetails.day1}}</p>
+      <p>Day2: {{userDetails.day2}}</p>
+      <p>Day3: {{userDetails.day3}}</p>
+
+
+    </div>
     <div class="classes">
-        <div class="classCard">
-            <h3>Day 1</h3>
-            <h4>Introduction</h4>
-            <button>Enroll</button>
-        </div>
-
-        <div class="classCard">
-            <h3>Day 2</h3>
-            <h4>Basics of data analystics</h4>
-            <button>Enroll</button>
-        </div>  
-        <div class="classCard">
-            <h3>Day 2</h3>
-            <h4>Python</h4>
-            <button>Enroll</button>
-        </div>  
-
-
+      <div class="classCard">
+        <h3>Day 1</h3>
+        <h4>Introduction</h4>
+        <button (click)="attendDay(1)" [disabled]="userDetails?.day1 >= 1" class="attend-button">Attend</button>
+      </div>
+  
+      <div class="classCard">
+        <h3>Day 2</h3>
+        <h4>Basics of Data Analytics</h4>
+        <button (click)="attendDay(2)" [disabled]="userDetails?.day2 >= 1" class="attend-button">Attend</button>
+      </div>
+  
+      <div class="classCard">
+        <h3>Day 3</h3>
+        <h4>Python</h4>
+        <button (click)="attendDay(3)" [disabled]="userDetails?.day3 >= 1" class="attend-button">Attend</button>
+      </div>
     </div>
+  
+   
+  </div>
+
+  
+
 </div>

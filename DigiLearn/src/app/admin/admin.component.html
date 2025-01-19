@@ -66,7 +66,7 @@
                     <table *ngIf="citizensData.length > 0" class="attendance-table">
                         <thead>
                             <tr>
-                                <th>Day</th>
+                                <th>Days</th>
                                 <th>Email</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
@@ -74,10 +74,10 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let record of citizensData">
-                                <td>{{ record.Day }}</td>
+                                <td>{{ record.days }}</td>
                                 <td>{{ record.Email }}</td>
-                                <td>{{ record["First name"] }}</td>
-                                <td>{{ record["Last name"] }}</td>
+                                <td>{{ record["FirstName"] }}</td>
+                                <td>{{ record["LastName"] }}</td>
                             </tr>
                         </tbody>
                     </table>
