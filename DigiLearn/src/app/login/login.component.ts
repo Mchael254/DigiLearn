@@ -16,7 +16,7 @@ export class LoginComponent {
 
   onSubmit() {
       if (this.Email == '') {
-        this.loginError = 'All fields are required';
+        this.loginError = 'Email cannot be empty';
         setTimeout(() => {
           this.loginError = '';
         }, 3000);

@@ -1,7 +1,6 @@
 .main{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     height: 100vh;
     width: 100vw;
@@ -13,13 +12,11 @@
     justify-content: space-around;
     align-items: center;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-
 }
 
 .logo {
-    border: solid blue 1px;
     height: 100%;
-    width: 50%;
+    width: 60%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,7 +32,6 @@
     align-items: center;
     width: 50%;
     height: 100%;
-    border: solid red 1px;
 }
 .nav ul{
     display: flex;
@@ -47,15 +43,15 @@
 }
 
 .container{
-    border: solid red 2px;
     width: 100%;
     display: flex;
     justify-content: space-around;
+    padding: 10px;
 }
 .sidePanel{
-    border: solid red 1px;
+    border: solid #d4d2c8 1px;
     height: 70vh;
-    width: 20%;
+    width: 24%;
     display: flex;
     flex-direction: column;
     /* justify-content: space-around; */
@@ -68,6 +64,7 @@
 .classes{
     margin-top: 20px;
     border: solid #d4d2c8 1px;
+    border-radius: 5px;
     height: 70vh;
     display: flex;
     justify-content: space-around;
@@ -80,7 +77,7 @@
     background-color: white;
     border: solid #d4d2c8 1px;
     height: 30vh;
-    width: 20vw;
+    width: 17vw;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -91,7 +88,7 @@
 }
 .classCard button{
     width: 80%;
-    height: 50px;
+    height: 40px;
     background-color:green;
     color:white;
     font-size: 20px;
@@ -101,8 +98,29 @@
 }
 
 .attend-button:disabled {
-    background-color: #d6d6d6; /* Grey background */
-    color: #888; /* Light grey text */
-    cursor: not-allowed; /* Change cursor to indicate non-clickable */
-    opacity: 0.6; /* Slightly faded look */
+    background-color: #d6d6d6; 
+    color: #888; 
+    cursor: not-allowed; 
+    opacity: 0.6; 
   }
+
+  .track {
+    width: 80%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  
+  .progress-bar {
+    width: 80%;
+    height: 20px;
+    position: relative;
+  }
+  
+  .progress {
+    height: 100%;
+    background-color: #4caf50;
+    transition: width 0.3s ease;
+  }
+  

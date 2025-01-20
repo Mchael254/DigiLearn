@@ -22,12 +22,13 @@
     <div class="sidePanel">
       <H1>Progress</H1>
       <p>Welcome {{userDetails.Email}}</p>
-      <p>Days: {{userDetails.days}}</p>
-      <p>Day1: {{userDetails.day1}}</p>
-      <p>Day2: {{userDetails.day2}}</p>
-      <p>Day3: {{userDetails.day3}}</p>
-
-
+      <div class="track">
+        <div class="progress-bar">
+          <div class="progress" [style.width.%]="progressBar()"></div>
+        </div>
+        <br>
+        <p>{{ progressBar() | number: '1.0-0' }}% Complete</p>
+      </div>
     </div>
     <div class="classes">
       <div class="classCard">

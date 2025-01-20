@@ -83,16 +83,8 @@
  
     
 }
-.buttons{
-    border: none;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
 
-}
-.buttons button{
+.sign-in{
     border: none;
     border-radius: 5px;
     padding: 10px;
@@ -102,9 +94,7 @@
     margin:5px 0px;
     cursor: pointer;
 }
-.buttons button:hover{
-    background: #e10716;
-}
+
 .back{
     text-align: center;
 }

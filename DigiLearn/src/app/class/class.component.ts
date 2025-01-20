@@ -17,6 +17,16 @@ export class ClassComponent {
     this.userDetails = this.authService.getUserDetails();
 
   }
+ 
+  progressBar() {
+    if(!this.userDetails){
+      this.router.navigate(['/login']);
+      return ;
+    }
+    const totalDays = 3;
+    return Math.min(this.userDetails.days / totalDays * 100, 100);
+
+  }
 
   attendDay(day: number) {
     if (!this.userDetails) {
@@ -47,7 +57,6 @@ export class ClassComponent {
     };
 
     // console.log(userData);
-
     this.authService.updateUserAttendance(userData)
       .pipe(first())
       .subscribe(
@@ -60,7 +69,6 @@ export class ClassComponent {
           console.log(error);
         }
       );
-
 
   }
 

@@ -20,6 +20,7 @@ export class AdminComponent {
   //data
   citizensData: any[] = [];
   errorMessage = '';
+  qualifiersData: any[] = [];
 
   currentView = 'upload';
   setView(view: string): void {
@@ -75,8 +76,9 @@ export class AdminComponent {
   getCitizens() {
     this.attendanceService.getCitizens().subscribe({
       next: (response) => {
-        this.citizensData = response.data; // Assuming the API returns an object with "data"
+        this.citizensData = response.data; 
         console.log('Attendance data loaded:', this.citizensData);
+        this.filterQualifiers();
       },
       error: (error) => {
         this.errorMessage = 'Failed to load attendance data.';
@@ -86,5 +88,11 @@ export class AdminComponent {
 
 
   }
+
+  //Qualifiers
+  filterQualifiers() {
+    this.qualifiersData = this.citizensData.filter(record => record.days >= 3);
+  }
+ 
 
 }

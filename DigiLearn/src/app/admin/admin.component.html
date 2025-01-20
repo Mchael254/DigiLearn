@@ -7,17 +7,13 @@
         <div class="nav">
             <ul>
                 <li><a href="" style="color: green;">Back</a></li>
-                <mat-icon>arrow_back</mat-icon>
-
             </ul>
-
         </div>
     </div>
     <div class="dashboard">
         <div class="navPanel">
             <button (click)="setView('upload')">Upload File</button>
             <button (click)="setView('citizens')">Citizens</button>
-            <button (click)="setView('attendance')">Attendance</button>
             <button (click)="setView('qualifiers')">Qualifiers</button>
         </div>
         <div class="container">
@@ -56,7 +52,6 @@
                   </section>
                 </div>
                   
-
             </div>
 
             <div class="citizens" *ngIf="currentView === 'citizens'">
@@ -85,6 +80,30 @@
                 </div>
 
             </div>
+            <div class="qualifiers" *ngIf="currentView === 'qualifiers'">
+                <div class="attendance-container">
+                  <h2>Qualifiers (3+ Days)</h2>
+                  <table *ngIf="qualifiersData.length > 0" class="attendance-table">
+                    <thead>
+                      <tr>
+                        <!-- <th>Days</th> -->
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let record of qualifiersData">
+                        <!-- <td>{{ record.days }}</td> -->
+                        <td>{{ record.Email }}</td>
+                        <td>{{ record.FirstName }}</td>
+                        <td>{{ record.LastName }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p *ngIf="qualifiersData.length === 0">No qualifiers found.</p>
+                </div>
+              </div>
 
         </div>
 
