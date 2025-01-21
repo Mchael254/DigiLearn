@@ -10,6 +10,7 @@ export class AdminService {
   private apiUrl = 'http://127.0.0.1:5000/get-attendance';
   private loginUserUrl = 'http://127.0.0.1:5000/login';
   private updateAttendanceUrl = 'http://127.0.0.1:5000/update-attendance';
+  private getCollectionsUrl = 'http://127.0.0.1:5000/getCollections'
 
   constructor(private http: HttpClient) { }
 
@@ -22,6 +23,11 @@ export class AdminService {
 
   getUserDetails() {
     return this.userDetails;
+  }
+
+  //get collections
+  getCollections(): Observable<any> {
+    return this.http.get<any>(this.getCollectionsUrl);
   }
 
   //get citizen list

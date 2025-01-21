@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TrialComponent } from './trial/trial.component';
 import { ClassComponent } from './class/class.component';
 import { FormsModule } from '@angular/forms';
+import { KeysPipe } from './pipes/keys.pipe';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { FormsModule } from '@angular/forms';
     AdminComponent,
     TrialComponent,
     ClassComponent,
+    KeysPipe,
 
   ],
   imports: [
@@ -36,4 +38,5 @@ import { FormsModule } from '@angular/forms';
   providers: [],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

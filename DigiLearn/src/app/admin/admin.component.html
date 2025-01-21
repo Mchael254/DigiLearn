@@ -10,53 +10,114 @@
             </ul>
         </div>
     </div>
+
     <div class="dashboard">
         <div class="navPanel">
             <button (click)="setView('upload')">Upload File</button>
             <button (click)="setView('citizens')">Citizens</button>
             <button (click)="setView('qualifiers')">Qualifiers</button>
         </div>
+
         <div class="container">
             <div class="header">
                 <h1>Admin</h1>
             </div>
 
             <div class="formContainer" *ngIf="currentView === 'upload'">
-                <p>Upload excel file for registered citizens</p>
+                <p>Upload Excel files for registered citizens</p>
 
-                <div id="messageContainer" style="color: green; margin-bottom: 10px;">
+                <!-- Dropdown and Create Collection Section -->
+                <div>
+                    <div *ngIf="collections.length > 0" class="miss">
+                        <label for="collectionDropdown">Choose a collection:</label>
+                        <select id="collectionDropdown" [(ngModel)]="selectedCollection">
+                            <option *ngFor="let collection of collections" [value]="collection">
+                                {{ collection }}
+                            </option>
+                        </select>
+                    </div>
 
+                    <button (click)="showCreateCollection = !showCreateCollection">
+                        {{ showCreateCollection ? 'Cancel' : 'Create New Collection' }}
+                    </button>
                 </div>
 
-                <h2>Single File Upload</h2>
-
-                <input type="file" class="file-input" (change)="onChange($event)" #fileUpload />
-                
-                <div *ngIf="file">
-                  <section class="file-info">
-                    File details:
-                    <ul>
-                      <li>Name: {{file.name}}</li>
-                      <li>Type: {{file.type}}</li>
-                      <li>Size: {{file.size}} bytes</li>
-                    </ul>
-                  </section>
-                
-                  <button (click)="onUpload()">Upload the file</button>
-                
-                  <section [ngSwitch]="status">
-                    <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
-                    <p *ngSwitchCase="'success'">✅ Done!</p>
-                    <p *ngSwitchCase="'fail'">❌ Error!</p>
-                    <p *ngSwitchDefault><mat-icon>hour_glass</mat-icon> Waiting to upload...</p>
-                  </section>
+                <!-- Create New Collection Form -->
+                <div *ngIf="showCreateCollection">
+                    <p>Create a new collection:</p>
+                    <input type="text" [(ngModel)]="newCollectionName" placeholder="Enter collection name" />
+                    <button (click)="createCollection()">Create</button>
                 </div>
-                  
+
+                <!-- File Upload Section -->
+                <div *ngIf="collections.length > 0 && !showCreateCollection">
+                    <h2>Multiple File Upload</h2>
+                    <input type="file" class="file-input" multiple (change)="onFilesSelected($event)" />
+
+                    <div *ngIf="files.length > 0">
+                        <section class="file-info">
+                            <h3>Selected Files:</h3>
+                            <ul>
+                                <li *ngFor="let file of files; index as i">
+                                    {{ file.name }} ({{ file.size }} bytes)
+                                    <button (click)="removeFile(i)">Remove</button>
+                                </li>
+                            </ul>
+                        </section>
+
+                        <button (click)="onUpload()">Upload All Files</button>
+
+                        <section *ngIf="status !== 'initial'" [ngSwitch]="status">
+                            <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
+                            <p *ngSwitchCase="'success'">✅ Done!</p>
+                            <p *ngSwitchCase="'fail'">❌ Error!</p>
+                            <p *ngSwitchDefault><mat-icon>hour_glass</mat-icon> Waiting to upload...</p>
+                        </section>
+                    </div>
+                </div>
             </div>
 
+
             <div class="citizens" *ngIf="currentView === 'citizens'">
+                <div class="citizenNav">
+                    <div class="chooseCollection">
+                        <p>Select a collection to view its data:</p>
+                        <select [(ngModel)]="selectedCollectionToView"
+                            (change)="getCollectionData(selectedCollectionToView)">
+                            <option *ngFor="let collection of collections" [value]="collection">
+                                {{ collection }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="refresh">
+                        <button (click)="getCitizens()"><mat-icon>refresh</mat-icon></button>
+                    </div>
+
+                </div>
+
                 <div class="attendance-container ">
-                    <h2>Attendance Records</h2>
+
+                    <div *ngIf="collectionData && collectionData.length > 0">
+                        <h3>Data for Collection: {{ selectedCollectionToView }}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <ng-container *ngFor="let column of collectionData[0] | keyvalue">
+                                        <th *ngIf="column.key !== '_id'">
+                                            {{ column.key }}
+                                        </th>
+                                    </ng-container>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- <h2>Attendance Records</h2>
                     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
                     <table *ngIf="citizensData.length > 0" class="attendance-table">
                         <thead>
@@ -76,34 +137,33 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p *ngIf="citizensData.length === 0">No attendance records found.</p>
+                    <p *ngIf="citizensData.length === 0">No attendance records found.</p> -->
                 </div>
-
             </div>
             <div class="qualifiers" *ngIf="currentView === 'qualifiers'">
                 <div class="attendance-container">
-                  <h2>Qualifiers (3+ Days)</h2>
-                  <table *ngIf="qualifiersData.length > 0" class="attendance-table">
-                    <thead>
-                      <tr>
-                        <!-- <th>Days</th> -->
-                        <th>Email</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let record of qualifiersData">
-                        <!-- <td>{{ record.days }}</td> -->
-                        <td>{{ record.Email }}</td>
-                        <td>{{ record.FirstName }}</td>
-                        <td>{{ record.LastName }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <p *ngIf="qualifiersData.length === 0">No qualifiers found.</p>
+                    <h2>Qualifiers (3+ Days)</h2>
+                    <table *ngIf="qualifiersData.length > 0" class="attendance-table">
+                        <thead>
+                            <tr>
+                                <!-- <th>Days</th> -->
+                                <th>Email</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let record of qualifiersData">
+                                <!-- <td>{{ record.days }}</td> -->
+                                <td>{{ record.Email }}</td>
+                                <td>{{ record.FirstName }}</td>
+                                <td>{{ record.LastName }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p *ngIf="qualifiersData.length === 0">No qualifiers found.</p>
                 </div>
-              </div>
+            </div>
 
         </div>
 

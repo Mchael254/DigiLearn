@@ -1,5 +1,4 @@
 
-
 .navbar {
     height: 13vh;
     width: 100%;
@@ -92,10 +91,6 @@
     text-align: center;
     color: #555;
   }
- 
-  
-
-
 
 a {
     color: green;
@@ -105,9 +100,24 @@ a {
 
 .citizens {
     border: solid #d4d2c8 1px;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     height: 80vh;
     width: 60vw;
+    overflow-y: auto;
+}
+.citizenNav{
+    border: solid blue 1px;
+    width: 80vh;
+    height: 10vh;
+    display: flex;
+    justify-content: space-around;
+}
+.collections{
+    border: solid red 1px;
+    height: 20vh;
+    width: 40vw;
     overflow-y: auto;
 }
 
@@ -123,6 +133,7 @@ a {
 
 .attendance-container {
     padding: 20px;
+    
 }
 
 .attendance-table {
