@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AdminService } from '../services/admin.service';
 import { HttpClient } from '@angular/common/http';
 import { throwError } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 
 @Component({
@@ -26,11 +27,10 @@ export class AdminComponent {
   currentView = 'citizens';
   setView(view: string): void {
     this.currentView = view;
-    this.getCitizens();
   }
 
   ngOnInit(): void {
-    this.getCitizens();
+
     this.getCollections();
   }
 
@@ -105,6 +105,14 @@ export class AdminComponent {
     if (this.collectionData.length > 0) {
       const allKeys = Object.keys(this.collectionData[0]);
       this.displayKeys = allKeys.filter((key) => key !== '_id');
+      //email
+      const emailKey = this.displayKeys.find((key) => key.toLowerCase().includes('email'));
+      if (emailKey) {
+        this.displayKeys = this.displayKeys.filter((key) => key !== emailKey);
+        // this.displayKeys.unshift(emailKey);
+
+        this.displayKeys.splice(2, 0, emailKey);
+      }
 
       this.normalizedData = this.collectionData.map((record) => {
         const normalizedRecord: any = {};
@@ -119,7 +127,7 @@ export class AdminComponent {
       this.displayKeys = [];
     }
     console.log('Normalized Data:', this.normalizedData);
-    console.log('Display Keys:', this.displayKeys);
+  
   }
 
   uploadError: string = '';
@@ -149,6 +157,34 @@ export class AdminComponent {
     }
   }
 
+  deleteCollectionName: string =    '';
+
+  deleteCollection() {
+    this.deleteCollectionName = this.selectedCollection;
+    if (this. deleteCollectionName.trim()) {
+      this.http
+        .delete('http://localhost:5000/deleteCollection', { params: { name: this.deleteCollectionName } })
+        .subscribe({
+          next: (response) => {
+            console.log('Collection created:', response);
+            this.getCollections();
+            this.newCollectionName = '';
+            this.showCreateCollection = false;
+          },
+          error: (error) => {
+            console.error('Failed to create collection:', error);
+            this.uploadError = error.error.message;
+            setTimeout(() => {
+               this.uploadError = ''
+            
+            }, 4000);
+           
+            
+            
+          }
+        });
+    }
+  }
 
   onFilesSelected(event: any) {
     const selectedFiles: FileList = event.target.files;
@@ -158,6 +194,7 @@ export class AdminComponent {
 
   removeFile(index: number) {
     this.files.splice(index, 1);
+    this.files=[];
   }
 
   //upload files
@@ -173,45 +210,53 @@ export class AdminComponent {
       this.http.post('http://localhost:5000/uploadFiles', formData).subscribe({
         next: (response) => {
           console.log('Files uploaded successfully:', response);
-          alert('Files uploaded successfully');
           this.status = "success";
           setTimeout(() => {
             this.status = 'initial';
             this.currentView = 'citizens';
-          }, 3000);
+            this.files = [];
+
+
+          }, 2000);
           
         },
         error: (error) => {
           console.error('Files upload failed:', error);
           this.status = 'fail';
           this.uploadError = error.error.message;
+          setTimeout(() => {
+            this.status = 'initial';
+            this.files = [];
+            this.uploadError = '';
+          }, 4000);
 
         }
       });
     }
   }
 
-
-  //show attendance panel
-  getCitizens() {
-    this.attendanceService.getCitizens().subscribe({
-      next: (response) => {
-        this.citizensData = response.data;
-        console.log('Attendance data loaded:', this.citizensData);
-        this.filterQualifiers();
-      },
-      error: (error) => {
-        this.errorMessage = 'Failed to load attendance data.';
-        console.error('Error fetching attendance:', error);
-      }
-    });
-
-
+  //download excel files
+  downloadQualifiers() {
+    const data = this.listQualifiers;
+    const columns = this.getColumns(data);
+    const worksheet = XLSX.utils.json_to_sheet(data, { header: columns });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Qualifiers');
+    XLSX.writeFile(workbook, 'qualifiers.xlsx');
+ 
   }
 
-  //Qualifiers
-  filterQualifiers() {
-    this.qualifiersData = this.citizensData.filter(record => record.days >= 3);
+  getColumns(data: any) {
+    const columns: string[] = [];
+    data.forEach((record: any) => {
+      for (const key in record) {
+        if (!columns.includes(key)) {
+          columns.push(key);
+        }
+      }
+
+    });
+    return columns;
   }
 
 

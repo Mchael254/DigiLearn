@@ -13,15 +13,12 @@
 
     <div class="dashboard">
         <div class="navPanel">
-            <button (click)="setView('upload')">Upload File</button>
-            <button (click)="setView('citizens')">Citizens</button>
+            <button (click)="setView('upload')">Manage Files</button>
+            <button (click)="setView('citizens')">Learners</button>
             <button (click)="setView('qualifiers')">Qualifiers</button>
         </div>
 
         <div class="container">
-            <div class="header">
-                <h1>Admin</h1>
-            </div>
 
             <div class="formContainer" *ngIf="currentView === 'upload'">
                 <p>Upload Excel files for registered citizens</p>
@@ -34,7 +31,8 @@
                             <option *ngFor="let collection of collections" [value]="collection">
                                 {{ collection }}
                             </option>
-                        </select>
+                        </select>&nbsp; &nbsp;
+                        <button (click)="deleteCollection()"><mat-icon style="color: rgb(233, 63, 63);">delete</mat-icon></button>
                     </div>
 
                     <button class="toggle-button" (click)="showCreateCollection = !showCreateCollection">
@@ -48,52 +46,53 @@
                     <p class="error-message">{{ uploadError }}</p>
 
                     <input type="text" [(ngModel)]="newCollectionName" placeholder="Enter collection name"
-                        class="input-field" />
+                        class="input-field" /> &nbsp; &nbsp;
                     <button class="create-button" (click)="createCollection()">Create</button>
                 </div>
 
 
                 <!-- File Upload Section -->
-                <div *ngIf="collections.length > 0 && !showCreateCollection">
-                    <h2>Multiple File Upload</h2>
+                <div *ngIf="collections.length > 0 && !showCreateCollection" class="upload-container">
+                    <h4 class="upload-title">File Upload</h4>
                     <input type="file" class="file-input" multiple (change)="onFilesSelected($event)" />
-
+                  
                     <div *ngIf="files.length > 0">
-                        <section class="file-info">
-                            <h3>Selected Files:</h3>
-                            <ul>
-                                <li *ngFor="let file of files; index as i">
-                                    {{ file.name }} ({{ file.size }} bytes)
-                                    <button (click)="removeFile(i)">Remove</button>
-                                </li>
-                            </ul>
-                        </section>
-
-                        <button (click)="onUpload()">Upload All Files</button>
-
-                        <section *ngIf="status !== 'initial'" [ngSwitch]="status">
-                            <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
-                            <p *ngSwitchCase="'success'">✅ Done!</p>
-                            <p *ngSwitchCase="'fail'">❌ Error!</p>
-                            <p>{{uploadError}}</p>
-                            <p *ngSwitchDefault><mat-icon>hour_glass</mat-icon> Waiting to upload...</p>
-                        </section>
+                      <section class="file-info">
+                        <h3 class="file-info-title">Selected Files:</h3>
+                        <ul class="file-list">
+                          <li *ngFor="let file of files; index as i" class="file-item">
+                            {{ file.name }} ({{ file.size }} bytes)
+                            <button class="remove-btn" (click)="removeFile(i)">Remove</button>
+                          </li>
+                        </ul>
+                      </section>
+                  
+                      <button class="upload-btn" (click)="onUpload()">Upload</button>
+                  
+                      <section *ngIf="status !== 'initial'" [ngSwitch]="status" class="status-container">
+                        <p *ngSwitchCase="'uploading'" class="status-message uploading">⏳ Uploading...</p>
+                        <p *ngSwitchCase="'success'" class="status-message success">✅ Done!</p>
+                        <p *ngSwitchCase="'fail'" class="status-message fail">❌ Error!</p>
+                        <p class="error-message">{{ uploadError }}</p>
+                        <p *ngSwitchDefault class="status-message waiting"><mat-icon>hourglass_empty</mat-icon> Waiting to upload...</p>
+                      </section>
                     </div>
-                </div>
+                  </div>
+                  
             </div>
 
 
             <div class="citizens" *ngIf="currentView === 'citizens'">
+                
                 <div class="citizenNav">
-
-                    <p>Select a collection to view its data:</p>
+                    <p>Select a collection:</p>
                     <select [(ngModel)]="selectedCollectionToView"
                         (change)="getCollectionData(selectedCollectionToView)">
                         <option *ngFor="let collection of collections" [value]="collection">
                             {{ collection }}
                         </option>
                     </select>
-
+                    
                 </div>
 
                 <div class="attendance-container">
@@ -145,7 +144,11 @@
             </div>
 
             <div class="qualifiers" *ngIf="currentView === 'qualifiers'">
-                <h4>List of Qualifiers</h4>
+                <div class="qualifiersNav">
+                    <h4>List of Qualifiers</h4>
+                    <button (click)="downloadQualifiers()"><mat-icon>download</mat-icon></button>
+                </div>
+               
                 <p *ngIf="listQualifiers.length === 0" class="no-qualifiers-message">
                     No qualifiers available.
                 </p>
