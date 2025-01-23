@@ -3,6 +3,7 @@ import { AdminService } from '../services/admin.service';
 import { HttpClient } from '@angular/common/http';
 import { throwError } from 'rxjs';
 
+
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -35,8 +36,6 @@ export class AdminComponent {
 
 
   //upload file
-  status: "initial" | "uploading" | "success" | "fail" = "initial";
-  files: File[] = [];
   collections: any[] = [];
   selectedCollection: any = '';
   viewCollection: any = '';
@@ -44,6 +43,11 @@ export class AdminComponent {
   showCreateCollection: boolean = false;
   selectedCollectionToView: string = '';
   collectionData: any[] = [];
+  normalizedData: any[] = [];
+  displayKeys: string[] = [];
+  filteredData: any[] = [];
+  daysFilter: number | null = null;
+
 
   getCollections() {
     this.attendanceService.getCollections().subscribe({
@@ -60,11 +64,13 @@ export class AdminComponent {
     })
 
   }
+
   getCollectionData(collectionName: string) {
     this.http.get<any[]>(`http://localhost:5000/getCollectionData/${collectionName}`).subscribe({
       next: (response) => {
         this.collectionData = response;
         console.log('Collection data loaded:', this.collectionData);
+        this.normalizeData();
       },
       error: (error) => {
         console.error('Failed to fetch collection data:', error);
@@ -72,7 +78,51 @@ export class AdminComponent {
     });
   }
 
+  qualifiersCount: number = 0;
+  listQualifiers: any[] = [];
+  filterData() {
+    if (this.daysFilter !== null) {
+      this.filteredData = this.normalizedData.filter(record => record.days === this.daysFilter);
+      this.qualifiersCount = this.filteredData.length;
+      this.listQualifiers = this.filteredData;
+    } else {
 
+      this.filteredData = this.normalizedData;
+
+
+    }
+  }
+
+  clearFilter() {
+    this.daysFilter = null;
+    this.filteredData = this.normalizedData;
+    this.listQualifiers = [];
+    this.qualifiersCount = 0
+
+  }
+
+  normalizeData() {
+    if (this.collectionData.length > 0) {
+      const allKeys = Object.keys(this.collectionData[0]);
+      this.displayKeys = allKeys.filter((key) => key !== '_id');
+
+      this.normalizedData = this.collectionData.map((record) => {
+        const normalizedRecord: any = {};
+        for (const key of this.displayKeys) {
+          normalizedRecord[key] = record[key];
+        }
+        return normalizedRecord;
+      });
+      this.filterData();
+    } else {
+      this.normalizedData = [];
+      this.displayKeys = [];
+    }
+    console.log('Normalized Data:', this.normalizedData);
+    console.log('Display Keys:', this.displayKeys);
+  }
+
+  uploadError: string = '';
   createCollection() {
     if (this.newCollectionName.trim()) {
       this.http
@@ -80,12 +130,20 @@ export class AdminComponent {
         .subscribe({
           next: (response) => {
             console.log('Collection created:', response);
-            this.getCollections(); // Refresh collections
-            this.newCollectionName = ''; // Clear input
-            this.showCreateCollection = false; // Hide form
+            this.getCollections();
+            this.newCollectionName = '';
+            this.showCreateCollection = false;
           },
           error: (error) => {
             console.error('Failed to create collection:', error);
+            this.uploadError = error.error.message;
+            setTimeout(() => {
+               this.uploadError = ''
+            
+            }, 4000);
+           
+            
+            
           }
         });
     }
@@ -102,28 +160,32 @@ export class AdminComponent {
     this.files.splice(index, 1);
   }
 
-  // onCollectionChange() {
-  //   if (this.selectedCollection) {
-  //     console.log(`Selected collection: ${this.selectedCollection}`);
-  //   }
-  // }
-
+  //upload files
+  status: "initial" | "uploading" | "success" | "fail" = "initial";
+  files: File[] = [];
   onUpload() {
     if (this.files.length > 0 && this.selectedCollection) {
       const formData = new FormData();
       this.files.forEach((file) => formData.append('files', file, file.name));
       formData.append('collection', this.selectedCollection);
-
       this.status = 'uploading';
+      this.uploadError = '';
       this.http.post('http://localhost:5000/uploadFiles', formData).subscribe({
         next: (response) => {
           console.log('Files uploaded successfully:', response);
-          this.status = 'success';
-          this.files = [];
+          alert('Files uploaded successfully');
+          this.status = "success";
+          setTimeout(() => {
+            this.status = 'initial';
+            this.currentView = 'citizens';
+          }, 3000);
+          
         },
         error: (error) => {
           console.error('Files upload failed:', error);
           this.status = 'fail';
+          this.uploadError = error.error.message;
+
         }
       });
     }
@@ -151,6 +213,10 @@ export class AdminComponent {
   filterQualifiers() {
     this.qualifiersData = this.citizensData.filter(record => record.days >= 3);
   }
+
+
+
+
 
 
 }
