@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,  } from '@angular/core';
 import { AdminService } from '../services/admin.service';
 import { HttpClient } from '@angular/common/http';
 import { throwError } from 'rxjs';
@@ -20,7 +20,6 @@ export class AdminComponent {
 
 
   //data
-  citizensData: any[] = [];
   errorMessage = '';
   qualifiersData: any[] = [];
 
@@ -30,20 +29,21 @@ export class AdminComponent {
   }
 
   ngOnInit(): void {
-
     this.getCollections();
+    this.getCollectionData(this.selectedCollection);
+    this.listQualifiers = [];
+
   }
 
 
   //upload file
   collections: any[] = [];
   selectedCollection: any = '';
-  viewCollection: any = '';
   newCollectionName: string = '';
   showCreateCollection: boolean = false;
   selectedCollectionToView: string = '';
   collectionData: any[] = [];
-  normalizedData: any[] = [];
+
   displayKeys: string[] = [];
   filteredData: any[] = [];
   daysFilter: number | null = null;
@@ -66,7 +66,7 @@ export class AdminComponent {
   }
 
   getCollectionData(collectionName: string) {
-    this.http.get<any[]>(`http://localhost:5000/getCollectionData/${collectionName}`).subscribe({
+    this.http.get<any[]>(`https://class-attendance-m0jh.onrender.com/getCollectionData/${collectionName}`).subscribe({
       next: (response) => {
         this.collectionData = response;
         console.log('Collection data loaded:', this.collectionData);
@@ -101,6 +101,8 @@ export class AdminComponent {
 
   }
 
+  //normalize data
+  normalizedData: any[] = [];
   normalizeData() {
     if (this.collectionData.length > 0) {
       const allKeys = Object.keys(this.collectionData[0]);
@@ -109,8 +111,6 @@ export class AdminComponent {
       const emailKey = this.displayKeys.find((key) => key.toLowerCase().includes('email'));
       if (emailKey) {
         this.displayKeys = this.displayKeys.filter((key) => key !== emailKey);
-        // this.displayKeys.unshift(emailKey);
-
         this.displayKeys.splice(2, 0, emailKey);
       }
 
@@ -127,14 +127,15 @@ export class AdminComponent {
       this.displayKeys = [];
     }
     console.log('Normalized Data:', this.normalizedData);
-  
+
   }
 
+  //create collection
   uploadError: string = '';
   createCollection() {
     if (this.newCollectionName.trim()) {
       this.http
-        .post('http://localhost:5000/createCollection', { name: this.newCollectionName })
+        .post('https://class-attendance-m0jh.onrender.com/createCollection', { name: this.newCollectionName })
         .subscribe({
           next: (response) => {
             console.log('Collection created:', response);
@@ -146,41 +147,43 @@ export class AdminComponent {
             console.error('Failed to create collection:', error);
             this.uploadError = error.error.message;
             setTimeout(() => {
-               this.uploadError = ''
-            
+              this.uploadError = ''
+
             }, 4000);
-           
-            
-            
+
           }
         });
     }
   }
 
-  deleteCollectionName: string =    '';
 
+  //delete collection
+  deleteCollectionName: string = '';
   deleteCollection() {
     this.deleteCollectionName = this.selectedCollection;
-    if (this. deleteCollectionName.trim()) {
+    if (this.deleteCollectionName.trim()) {
       this.http
-        .delete('http://localhost:5000/deleteCollection', { params: { name: this.deleteCollectionName } })
+        .delete('https://class-attendance-m0jh.onrender.com/deleteCollection', { params: { name: this.deleteCollectionName } })
         .subscribe({
           next: (response) => {
-            console.log('Collection created:', response);
+            console.log('Collection deleted:', response);
             this.getCollections();
-            this.newCollectionName = '';
+            this.normalizedData = [];
+            this.filteredData = [];
             this.showCreateCollection = false;
+            this.selectedCollection = '';
+            this.selectedCollectionToView = '';
+            this.clearFilter();
+            this.listQualifiers = [];
           },
           error: (error) => {
             console.error('Failed to create collection:', error);
             this.uploadError = error.error.message;
             setTimeout(() => {
-               this.uploadError = ''
-            
+              this.uploadError = ''
+
             }, 4000);
-           
-            
-            
+
           }
         });
     }
@@ -194,7 +197,7 @@ export class AdminComponent {
 
   removeFile(index: number) {
     this.files.splice(index, 1);
-    this.files=[];
+    this.files = [];
   }
 
   //upload files
@@ -207,7 +210,7 @@ export class AdminComponent {
       formData.append('collection', this.selectedCollection);
       this.status = 'uploading';
       this.uploadError = '';
-      this.http.post('http://localhost:5000/uploadFiles', formData).subscribe({
+      this.http.post('https://class-attendance-m0jh.onrender.com/uploadFiles', formData).subscribe({
         next: (response) => {
           console.log('Files uploaded successfully:', response);
           this.status = "success";
@@ -215,10 +218,8 @@ export class AdminComponent {
             this.status = 'initial';
             this.currentView = 'citizens';
             this.files = [];
-
-
           }, 2000);
-          
+
         },
         error: (error) => {
           console.error('Files upload failed:', error);
@@ -236,14 +237,22 @@ export class AdminComponent {
   }
 
   //download excel files
+  noDownloadData: boolean = false;
   downloadQualifiers() {
+    if (this.listQualifiers.length === 0) {
+      this.noDownloadData = true;
+      setTimeout(() => {
+        this.noDownloadData = false;
+      }, 2000);
+      return;
+    }
     const data = this.listQualifiers;
     const columns = this.getColumns(data);
     const worksheet = XLSX.utils.json_to_sheet(data, { header: columns });
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Qualifiers');
     XLSX.writeFile(workbook, 'qualifiers.xlsx');
- 
+
   }
 
   getColumns(data: any) {
@@ -258,9 +267,6 @@ export class AdminComponent {
     });
     return columns;
   }
-
-
-
 
 
 

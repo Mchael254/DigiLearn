@@ -13,6 +13,7 @@
 
     <div class="dashboard">
         <div class="navPanel">
+            <h4 style="font-weight: bold;">Admin Panel</h4>
             <button (click)="setView('upload')">Manage Files</button>
             <button (click)="setView('citizens')">Learners</button>
             <button (click)="setView('qualifiers')">Qualifiers</button>
@@ -54,7 +55,7 @@
                 <!-- File Upload Section -->
                 <div *ngIf="collections.length > 0 && !showCreateCollection" class="upload-container">
                     <h4 class="upload-title">File Upload</h4>
-                    <input type="file" class="file-input" multiple (change)="onFilesSelected($event)" />
+                    <input type="file" class="file-input" multiple (change)="onFilesSelected($event)" accept=".xls,.xlsx" />
                   
                     <div *ngIf="files.length > 0">
                       <section class="file-info">
@@ -95,9 +96,9 @@
                     
                 </div>
 
-                <div class="attendance-container">
+                <div  class="attendance-container">
                     <p *ngIf="collectionData.length === 0">
-                        Select collection or create one in the upload panel
+                        Select collection or create one in the Manage Files panel
                     </p>
 
                     <div *ngIf="collectionData && collectionData.length > 0">
@@ -125,11 +126,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- <tr *ngFor="let record of normalizedData">
-                                    <td *ngFor="let key of displayKeys">
-                                        {{ record[key] }}
-                                    </td>
-                                </tr> -->
                                 <tr *ngFor="let record of filteredData">
                                     <td *ngFor="let key of displayKeys">
                                         {{ record[key] }}
@@ -151,6 +147,9 @@
                
                 <p *ngIf="listQualifiers.length === 0" class="no-qualifiers-message">
                     No qualifiers available.
+                </p>
+                <p *ngIf="noDownloadData" class="no-qualifiers-message">
+                    No data available for download.
                 </p>
                 <table class="styled-table">
                     <thead>

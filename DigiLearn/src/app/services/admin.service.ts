@@ -10,7 +10,34 @@ export class AdminService {
   private apiUrl = 'http://127.0.0.1:5000/get-attendance';
   private loginUserUrl = 'http://127.0.0.1:5000/login';
   private updateAttendanceUrl = 'http://127.0.0.1:5000/update-attendance';
-  private getCollectionsUrl = 'http://127.0.0.1:5000/getCollections'
+  private getCollectionsUrl = 'https://class-attendance-m0jh.onrender.com/getCollections'
+
+  //render api's
+  private renderCreateCollectionUrl = 'https://class-attendance-m0jh.onrender.com/createCollection';
+  private renderGetCollectionsUrl = 'https://class-attendance-m0jh.onrender.com/getCollections';
+  private renderGetCollectionDataUrl = 'https://class-attendance-m0jh.onrender.com/getCollectionData';
+  private renderUploadFileUrl = 'https://class-attendance-m0jh.onrender.com/uploadFiles';
+  private renderDeleteCollectionUrl = 'https://class-attendance-m0jh.onrender.com/deleteCollection';
+
+  renderGetCollections(): Observable<any> {
+    return this.http.get<any>(this.renderGetCollectionsUrl);
+  }
+
+  renderGetCollectionData(collectionName: string): Observable<any> {
+    return this.http.get<any>(`${this.renderGetCollectionDataUrl}/${collectionName}`);
+  }
+
+  renderUploadFile(formData: FormData): Observable<any> {
+    return this.http.post(this.renderUploadFileUrl, formData);
+  }
+
+  renderCreateCollection(collectionName: string): Observable<any> {
+    return this.http.post(this.renderCreateCollectionUrl, { collectionName });
+  }
+
+  renderDeleteCollection(collectionName: string): Observable<any> {
+    return this.http.delete(`${this.renderDeleteCollectionUrl}/${collectionName}`);
+  }
 
   constructor(private http: HttpClient) { }
 
