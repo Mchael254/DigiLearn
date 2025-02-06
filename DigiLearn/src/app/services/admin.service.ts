@@ -10,7 +10,7 @@ export class AdminService {
   private apiUrl = 'http://127.0.0.1:5000/get-attendance';
   private loginUserUrl = 'http://127.0.0.1:5000/login';
   private updateAttendanceUrl = 'http://127.0.0.1:5000/update-attendance';
-  private getCollectionsUrl = 'https://class-attendance-m0jh.onrender.com/getCollections'
+  private getCollectionsUrl = 'http://127.0.0.1:5000/getCollections'
 
   //render api's
   private renderCreateCollectionUrl = 'https://class-attendance-m0jh.onrender.com/createCollection';

@@ -1,4 +1,4 @@
-import { Component,  } from '@angular/core';
+import { Component, } from '@angular/core';
 import { AdminService } from '../services/admin.service';
 import { HttpClient } from '@angular/common/http';
 import { throwError } from 'rxjs';
@@ -45,8 +45,7 @@ export class AdminComponent {
   collectionData: any[] = [];
 
   displayKeys: string[] = [];
-  filteredData: any[] = [];
-  daysFilter: number | null = null;
+
 
 
   getCollections() {
@@ -66,7 +65,7 @@ export class AdminComponent {
   }
 
   getCollectionData(collectionName: string) {
-    this.http.get<any[]>(`https://class-attendance-m0jh.onrender.com/getCollectionData/${collectionName}`).subscribe({
+    this.http.get<any[]>(`http://127.0.0.1:5000/getCollectionData/${collectionName}`).subscribe({
       next: (response) => {
         this.collectionData = response;
         console.log('Collection data loaded:', this.collectionData);
@@ -78,8 +77,11 @@ export class AdminComponent {
     });
   }
 
+  //filter data
   qualifiersCount: number = 0;
   listQualifiers: any[] = [];
+  filteredData: any[] = [];
+  daysFilter: number | null = null;
   filterData() {
     if (this.daysFilter !== null) {
       this.filteredData = this.normalizedData.filter(record => record.days === this.daysFilter);
@@ -88,8 +90,6 @@ export class AdminComponent {
     } else {
 
       this.filteredData = this.normalizedData;
-
-
     }
   }
 
@@ -107,12 +107,21 @@ export class AdminComponent {
     if (this.collectionData.length > 0) {
       const allKeys = Object.keys(this.collectionData[0]);
       this.displayKeys = allKeys.filter((key) => key !== '_id');
+
       //email
       const emailKey = this.displayKeys.find((key) => key.toLowerCase().includes('email'));
       if (emailKey) {
         this.displayKeys = this.displayKeys.filter((key) => key !== emailKey);
         this.displayKeys.splice(2, 0, emailKey);
       }
+
+      // Move 'days' to the last position if it exists
+      const daysKey = this.displayKeys.find((key) => key.toLowerCase().includes('days'));
+      if (daysKey) {
+        this.displayKeys = this.displayKeys.filter((key) => key !== daysKey);
+        this.displayKeys.push(daysKey); // Add 'days' to the end
+      }
+
 
       this.normalizedData = this.collectionData.map((record) => {
         const normalizedRecord: any = {};
@@ -135,7 +144,7 @@ export class AdminComponent {
   createCollection() {
     if (this.newCollectionName.trim()) {
       this.http
-        .post('https://class-attendance-m0jh.onrender.com/createCollection', { name: this.newCollectionName })
+        .post('http://127.0.0.1:5000/createCollection', { name: this.newCollectionName })
         .subscribe({
           next: (response) => {
             console.log('Collection created:', response);
@@ -159,11 +168,12 @@ export class AdminComponent {
 
   //delete collection
   deleteCollectionName: string = '';
+  deleteSuccess: boolean = false;
   deleteCollection() {
     this.deleteCollectionName = this.selectedCollection;
     if (this.deleteCollectionName.trim()) {
       this.http
-        .delete('https://class-attendance-m0jh.onrender.com/deleteCollection', { params: { name: this.deleteCollectionName } })
+        .delete('http://127.0.0.1:5000/deleteCollection', { params: { name: this.deleteCollectionName } })
         .subscribe({
           next: (response) => {
             console.log('Collection deleted:', response);
@@ -175,6 +185,10 @@ export class AdminComponent {
             this.selectedCollectionToView = '';
             this.clearFilter();
             this.listQualifiers = [];
+            this.deleteSuccess = true;
+            setTimeout(() => {
+              this.deleteSuccess = false;
+            }, 1000);
           },
           error: (error) => {
             console.error('Failed to create collection:', error);
@@ -210,7 +224,7 @@ export class AdminComponent {
       formData.append('collection', this.selectedCollection);
       this.status = 'uploading';
       this.uploadError = '';
-      this.http.post('https://class-attendance-m0jh.onrender.com/uploadFiles', formData).subscribe({
+      this.http.post('http://127.0.0.1:5000/uploadFiles', formData).subscribe({
         next: (response) => {
           console.log('Files uploaded successfully:', response);
           this.status = "success";
@@ -225,6 +239,7 @@ export class AdminComponent {
           console.error('Files upload failed:', error);
           this.status = 'fail';
           this.uploadError = error.error.message;
+          // this.files = [];
           setTimeout(() => {
             this.status = 'initial';
             this.files = [];

@@ -39,6 +39,7 @@
                     <button class="toggle-button" (click)="showCreateCollection = !showCreateCollection">
                         {{ showCreateCollection ? 'Cancel' : 'Create New Collection' }}
                     </button>
+                    <p *ngIf="deleteSuccess" class="status-message success">✅ Done!</p>
                 </div>
 
                 <!-- Create New Collection Form -->

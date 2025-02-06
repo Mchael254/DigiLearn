@@ -7,7 +7,7 @@ import { TrialComponent } from './trial/trial.component';
 import { ClassComponent } from './class/class.component';
 
 const routes: Routes = [
-  {path:'',redirectTo:'/user',pathMatch:'full'},
+  {path:'',redirectTo:'/admin',pathMatch:'full'},
   { path:'user',component: UserComponent},
   { path:'login',component: LoginComponent},
   { path:'admin',component: AdminComponent},
